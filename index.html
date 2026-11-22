@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F7F2FF">
+<title>APK Builder 2.0 — by Silencorex</title>
+<meta name="description" content="APK Builder 2.0 for Sketchware (URL to APK maker). Turn any website into an Android app, with Studio, live preview and smart back control. By Silencorex (Sufiyan).">
+<style>
+:root{
+  --bg:#F7F2FF; --p:#9A6CEA; --pd:#7747CF; --pl:#C7A9F7; --soft:#EFE5FF; --soft2:#DFCCFB;
+  --ink:#2A1F47; --ink2:#6A5F8C; --ok:#2E9E6B;
+  --r:24px;
+  --gdeep:0 18px 50px -12px rgba(122,78,208,.30),0 4px 12px rgba(122,78,208,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{position:relative;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;font-size:16px;min-height:100vh;overflow-x:hidden}
+a{color:var(--pd);text-decoration:none}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+code{background:rgba(154,108,234,.12);padding:1px 6px;border-radius:6px;font-size:.92em;color:var(--pd)}
+
+/* ---------- colourful scene BEHIND the glass (glass needs something to bend) ---------- */
+.scene{position:absolute;left:0;right:0;top:0;height:100%;z-index:-1;overflow:hidden;background:
+  radial-gradient(1200px 700px at 10% -10%,#EADCFF 0%,transparent 60%),
+  radial-gradient(900px 600px at 100% 20%,#DCE4FF 0%,transparent 60%),
+  linear-gradient(180deg,#F7F2FF,#F1EAFF 60%,#F8F4FF)}
+.scene i{position:absolute;border-radius:50%;filter:blur(6px);opacity:.95;animation:drift 18s ease-in-out infinite alternate}
+.scene i:nth-child(1){width:440px;height:440px;left:-110px;top:2%;background:radial-gradient(circle at 35% 30%,#fff 0,#D9BFFF 25%,#B58DF2 60%,#9A6CEA 100%);animation-delay:-0s}
+.scene i:nth-child(2){width:360px;height:360px;right:-100px;top:9%;background:radial-gradient(circle at 35% 30%,#fff 0,#F3C7F4 28%,#D69AEF 62%,#B07BEA 100%);animation-delay:-3s}
+.scene i:nth-child(3){width:300px;height:300px;left:35%;top:17%;background:radial-gradient(circle at 35% 30%,#fff 0,#CBD7FF 28%,#A9B8F7 62%,#8D8BEA 100%);animation-delay:-6s}
+.scene i:nth-child(4){width:420px;height:420px;right:6%;top:25%;background:radial-gradient(circle at 35% 30%,#fff 0,#E3CCFF 28%,#C39BF4 62%,#A57AEA 100%);animation-delay:-9s}
+.scene i:nth-child(5){width:340px;height:340px;left:-90px;top:33%;background:radial-gradient(circle at 35% 30%,#fff 0,#D9BFFF 25%,#B58DF2 60%,#9A6CEA 100%);animation-delay:-12s}
+.scene i:nth-child(6){width:380px;height:380px;right:-80px;top:41%;background:radial-gradient(circle at 35% 30%,#fff 0,#F3C7F4 28%,#D69AEF 62%,#B07BEA 100%);animation-delay:-15s}
+.scene i:nth-child(7){width:320px;height:320px;left:40%;top:49%;background:radial-gradient(circle at 35% 30%,#fff 0,#CBD7FF 28%,#A9B8F7 62%,#8D8BEA 100%);animation-delay:-1s}
+.scene i:nth-child(8){width:400px;height:400px;left:-100px;top:57%;background:radial-gradient(circle at 35% 30%,#fff 0,#E3CCFF 28%,#C39BF4 62%,#A57AEA 100%);animation-delay:-4s}
+.scene i:nth-child(9){width:350px;height:350px;right:2%;top:65%;background:radial-gradient(circle at 35% 30%,#fff 0,#D9BFFF 25%,#B58DF2 60%,#9A6CEA 100%);animation-delay:-7s}
+.scene i:nth-child(10){width:330px;height:330px;left:30%;top:73%;background:radial-gradient(circle at 35% 30%,#fff 0,#F3C7F4 28%,#D69AEF 62%,#B07BEA 100%);animation-delay:-10s}
+.scene i:nth-child(11){width:420px;height:420px;right:-110px;top:81%;background:radial-gradient(circle at 35% 30%,#fff 0,#CBD7FF 28%,#A9B8F7 62%,#8D8BEA 100%);animation-delay:-13s}
+.scene i:nth-child(12){width:360px;height:360px;left:-70px;top:90%;background:radial-gradient(circle at 35% 30%,#fff 0,#E3CCFF 28%,#C39BF4 62%,#A57AEA 100%);animation-delay:-16s}
+@keyframes drift{to{transform:translate3d(40px,60px,0) scale(1.08)}}
+
+/* ---------- REAL GLASS ---------- */
+.stat,.card,.step,.panel,.scroll,details,.tree,.note,header,.pill,.btn.ghost,.dlglass{
+  position:relative;isolation:isolate;overflow:hidden;
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.52) 0%,rgba(255,255,255,.16) 45%,rgba(255,255,255,.34) 100%);
+  -webkit-backdrop-filter:blur(26px) saturate(190%) brightness(1.07) contrast(1.02);
+  backdrop-filter:blur(26px) saturate(190%) brightness(1.07) contrast(1.02);
+  border:1px solid rgba(255,255,255,.55);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.95),          /* top rim light */
+    inset 1.5px 0 0 rgba(255,255,255,.55),          /* left rim */
+    inset 0 -1.5px 0 rgba(150,110,225,.22),         /* bottom edge refraction */
+    inset -1px 0 0 rgba(150,110,225,.12),
+    inset 0 0 22px rgba(255,255,255,.35),           /* inner glow = glass thickness */
+    var(--gdeep);
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .stat,.card,.step,.panel,.scroll,details,.tree,.note,header,.pill,.btn.ghost,.dlglass{background:rgba(255,255,255,.88)}
+}
+/* gradient rim: bright where light enters (top-left) and exits (bottom-right) */
+.stat::before,.card::before,.step::before,.panel::before,.scroll::before,details::before,.tree::before,.note::before,header::before,.pill::before,.btn.ghost::before,.dlglass::before{
+  content:"";position:absolute;inset:0;border-radius:inherit;padding:1.3px;pointer-events:none;z-index:2;
+  background:linear-gradient(135deg,rgba(255,255,255,1) 0%,rgba(255,255,255,.12) 38%,rgba(190,160,245,.18) 62%,rgba(255,255,255,.9) 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);
+}
+/* specular streak + cursor-following highlight */
+.stat::after,.card::after,.step::after,.panel::after,.scroll::after,details::after,.tree::after,.note::after,.dlglass::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:1;
+  background:
+    radial-gradient(220px circle at var(--mx,18%) var(--my,0%),rgba(255,255,255,.75),rgba(255,255,255,0) 62%),
+    linear-gradient(118deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,0) 26%,rgba(255,255,255,0) 72%,rgba(255,255,255,.22) 100%);
+  opacity:.55;transition:opacity .25s;
+}
+.stat:hover::after,.card:hover::after,.step:hover::after,.panel:hover::after,.scroll:hover::after,details:hover::after,.dlglass:hover::after{opacity:1}
+.stat>*,.card>*,.step>*,.panel>*,.scroll>*,details>*,.tree>*,.note>*,.dlglass>*{position:relative;z-index:3}
+
+/* header */
+/* drawable-style icons (inline SVG, drawn in code) */
+.ic{width:24px;height:24px;fill:none;stroke:var(--pd);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;display:block}
+.note .i .ic{width:24px;height:24px;stroke:#B7791F}
+.ico .ic{filter:drop-shadow(0 1px 0 rgba(255,255,255,.8))}
+
+header{position:sticky;top:0;z-index:30;border-radius:0;overflow:visible;border:0;border-bottom:1px solid rgba(154,108,234,.16);
+  background:linear-gradient(180deg,rgba(255,255,255,.74),rgba(246,240,255,.58));
+  box-shadow:0 10px 28px -14px rgba(122,78,208,.30)}
+header::before{display:none}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;height:60px;position:relative;z-index:3}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.01em;color:var(--ink);white-space:nowrap;min-width:0}
+.brand .tag{margin:0}
+.nav .btn{flex:none;margin-left:6px}
+@media(max-width:520px){.hm{display:none}.nav{gap:12px;height:56px}.brand{gap:8px;font-size:15px}}
+.nav ul{display:flex;gap:22px;list-style:none;font-size:14px}
+.navx a{color:var(--ink2);font-weight:550}.navx a:hover{color:var(--pd)}
+@media(max-width:760px){.nav ul{display:none}}
+
+/* buttons: glossy glass-gel */
+.btn{white-space:nowrap;position:relative;display:inline-flex;align-items:center;justify-content:center;gap:10px;border:0;cursor:pointer;font:inherit;font-weight:650;border-radius:18px;padding:15px 26px;transition:transform .15s,box-shadow .2s;overflow:hidden}
+.btn.primary{color:#fff;background:linear-gradient(135deg,#B997F7 0%,#9A6CEA 50%,#8654DE 100%);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,.7),inset 0 -2px 6px rgba(90,45,170,.35),0 12px 28px rgba(154,108,234,.45),0 2px 6px rgba(120,70,200,.2);text-shadow:0 1px 2px rgba(70,30,140,.35)}
+.btn.primary::after{content:"";position:absolute;left:6%;right:6%;top:2px;height:48%;border-radius:16px 16px 40px 40px;background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,.05));pointer-events:none}
+.btn.primary:hover{transform:translateY(-2px);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.8),inset 0 -2px 6px rgba(90,45,170,.35),0 18px 36px rgba(154,108,234,.55)}
+.btn.primary:active{transform:translateY(0)}
+.btn.ghost{color:var(--pd);border-radius:18px}
+.btn.ghost:hover{transform:translateY(-2px)}
+.btn.sm{padding:9px 16px;font-size:14px;border-radius:13px}
+
+/* hero */
+.brandmark{display:inline-flex;align-items:center;gap:12px;margin-bottom:22px;font-weight:750;font-size:19px;letter-spacing:-.01em;color:var(--ink)}
+.logo{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;font-size:18px;font-weight:700;color:#A98AE8;
+  background:linear-gradient(135deg,rgba(255,255,255,.95),rgba(231,216,252,.85));
+  box-shadow:inset 0 1.5px 0 #fff,inset 0 -2px 6px rgba(154,108,234,.18),0 8px 20px rgba(154,108,234,.22)}
+.hero{padding-top:44px}
+.pill{display:flex;width:max-content;margin-left:auto;margin-right:auto}
+
+.hero{padding:64px 0 30px;text-align:center}
+.pill{display:inline-flex;align-items:center;gap:8px;color:var(--pd);padding:7px 15px;border-radius:99px;font-size:13px;font-weight:650}
+.pill i{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px rgba(46,158,107,.18);position:relative;z-index:3}
+h1{font-size:clamp(33px,7.4vw,68px);line-height:1.04;letter-spacing:-.035em;margin:22px auto 16px;max-width:820px;font-weight:800}
+h1 span{background:linear-gradient(120deg,#6A3BC4,#8E5FE3 55%,#7478DE);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-size:clamp(16px,2.4vw,19px);color:var(--ink2);max-width:640px;margin:0 auto 30px}
+.cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.meta{display:flex;gap:8px 22px;justify-content:center;flex-wrap:wrap;margin-top:22px;font-size:13px;color:var(--ink2)}
+.meta b{color:var(--ink);font-weight:650}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:44px 0 10px}
+.stat{border-radius:var(--r);padding:20px 16px;text-align:center}
+.stat b{display:block;font-size:30px;letter-spacing:-.02em;color:var(--pd);line-height:1.1}
+.stat span{font-size:13px;color:var(--ink2)}
+@media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+/* sections */
+section{padding:58px 0 6px}
+.eyebrow{font-size:12.5px;font-weight:700;color:var(--p);letter-spacing:.12em;text-transform:uppercase}
+h2{font-size:clamp(26px,4.4vw,38px);letter-spacing:-.025em;line-height:1.15;margin:8px 0 12px;font-weight:800}
+.sub{color:var(--ink2);max-width:660px;margin-bottom:28px}
+.sub:empty{display:none}
+.grid{display:grid;gap:16px}
+.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:repeat(2,1fr)}
+@media(max-width:860px){.g3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.g3,.g2{grid-template-columns:1fr}}
+.card{border-radius:var(--r);padding:24px;transition:transform .25s}
+.card:hover{transform:translateY(-4px)}
+.ico{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;font-size:22px;margin-bottom:14px;
+  background:linear-gradient(135deg,rgba(255,255,255,.95),rgba(223,204,251,.7));
+  box-shadow:inset 0 1.5px 0 #fff,inset 0 -2px 5px rgba(154,108,234,.2),0 6px 14px rgba(154,108,234,.22)}
+.card h3{font-size:17px;letter-spacing:-.01em;margin-bottom:6px}
+.card p{font-size:14.5px;color:var(--ink2)}
+.card ul{margin:8px 0 0 18px;font-size:14px;color:var(--ink2)}
+.card li{margin:3px 0}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;color:var(--pd);background:rgba(154,108,234,.14);padding:3px 9px;border-radius:99px;margin-left:6px;vertical-align:2px}
+
+/* studio panel (big glass slab holding smaller glass cards) */
+.panel{border-radius:32px;padding:32px;background:linear-gradient(135deg,rgba(255,255,255,.55),rgba(255,255,255,.2) 50%,rgba(255,255,255,.4))}
+.panel{-webkit-backdrop-filter:none;backdrop-filter:none}
+.panel .grid{margin-top:22px}
+@media(max-width:600px){.panel{padding:18px;border-radius:26px}}
+
+/* steps */
+.steps{counter-reset:s;display:grid;gap:14px}
+.step{display:grid;grid-template-columns:46px 1fr;gap:16px;border-radius:var(--r);padding:20px}
+.step>div{grid-column:2}
+.step::before{counter-increment:s;content:counter(s);position:static;inset:auto;padding:0;width:46px;height:46px;border-radius:15px;grid-column:1;grid-row:1;z-index:3;
+  background:linear-gradient(135deg,#C7A9F7,#9A6CEA 60%,#8654DE);color:#fff;font-weight:800;display:grid;place-items:center;-webkit-mask:none;mask:none;
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,.7),0 8px 18px rgba(154,108,234,.4)}
+.step h3{font-size:16.5px;margin-bottom:4px}
+.step p{font-size:14.5px;color:var(--ink2)}
+.codebox{position:relative;background:rgba(255,255,255,.6);color:var(--pd);border:1px solid rgba(255,255,255,.8);border-radius:14px;padding:13px 70px 13px 16px;margin-top:10px;font-size:13px;overflow-x:auto;white-space:nowrap;box-shadow:inset 0 2px 6px rgba(154,108,234,.15)}
+.codebox code{background:none;padding:0;color:inherit}
+.copy{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:linear-gradient(135deg,#B997F7,#8654DE);color:#fff;border:0;border-radius:10px;padding:6px 12px;font-size:12px;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
+
+/* tree */
+.tree{border-radius:var(--r);padding:22px;font-size:13.5px;line-height:1.75;overflow-x:auto;white-space:pre;color:var(--ink)}
+.tree em{color:var(--ink2);font-style:normal}
+
+/* table (glass wrapper) */
+.scroll{border-radius:var(--r);overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:14.5px;background:transparent}
+.tbl th,.tbl td{padding:14px 18px;text-align:left;border-bottom:1px solid rgba(255,255,255,.7);vertical-align:top}
+.tbl th{background:rgba(154,108,234,.12);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--pd)}
+.tbl tr:last-child td{border-bottom:0}
+
+/* notice */
+.note{display:flex;gap:14px;border-radius:var(--r);padding:18px 20px;color:#6B4E0E;font-size:14.5px;
+  background:linear-gradient(135deg,rgba(255,244,214,.75),rgba(255,236,190,.35))}
+.note b{color:#5A3F06}
+.note .i{font-size:22px;line-height:1.2}
+
+/* download */
+.dl{margin-top:58px;border-radius:34px;padding:34px 22px;text-align:center;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#D9C2FB,#B997F7 45%,#9A9BF0);box-shadow:0 30px 70px -20px rgba(122,78,208,.5)}
+.dl:before,.dl:after{content:"";position:absolute;border-radius:50%;filter:blur(2px)}
+.dl:before{width:300px;height:300px;left:-80px;bottom:-120px;background:radial-gradient(circle at 35% 30%,#fff,#F0DEFF 35%,#CBA6F7 100%);opacity:.85}
+.dl:after{width:220px;height:220px;right:-50px;top:-70px;background:radial-gradient(circle at 35% 30%,#fff,#DDE3FF 35%,#A9B8F7 100%);opacity:.9}
+.dlglass .btn{white-space:nowrap;padding-left:20px;padding-right:20px}
+.dlglass{border-radius:28px;padding:36px 14px;max-width:700px;margin:0 auto;z-index:2}
+.dlglass h2{margin-top:0}
+.dlglass p{color:var(--ink2);max-width:520px;margin:0 auto 24px}
+.hash{margin:24px auto 0;max-width:620px;font-size:12px;color:var(--ink2);word-break:break-all}
+.hash button{background:rgba(154,108,234,.16);border:0;color:var(--pd);border-radius:8px;padding:4px 10px;font-size:11.5px;cursor:pointer;margin-left:6px;font-weight:650}
+
+/* faq */
+details{border-radius:18px;padding:0 20px;margin-bottom:10px}
+summary{cursor:pointer;list-style:none;padding:17px 0;font-weight:650;display:flex;justify-content:space-between;gap:14px;position:relative;z-index:3}
+summary::-webkit-details-marker{display:none}
+summary:after{content:"+";color:var(--p);font-size:22px;line-height:1;font-weight:500}
+details[open] summary:after{content:"–"}
+details p{padding:0 0 18px;color:var(--ink2);font-size:14.5px}
+
+/* changelog */
+.log{border-left:2px solid rgba(154,108,234,.3);margin-left:8px;padding-left:22px}
+.log h3{font-size:17px;margin-bottom:4px;position:relative}
+.log h3:before{content:"";position:absolute;left:-30px;top:6px;width:12px;height:12px;border-radius:50%;background:linear-gradient(135deg,#C7A9F7,#8654DE);box-shadow:0 0 0 4px rgba(154,108,234,.18)}
+.log div{margin-bottom:26px}.log p,.log li{font-size:14.5px;color:var(--ink2)}.log ul{margin:6px 0 0 18px}
+
+footer{margin-top:70px;border-top:1px solid rgba(255,255,255,.7);padding:34px 0 46px;text-align:center;color:var(--ink2);font-size:14px}
+footer b{color:var(--ink)}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,30px);opacity:0;background:rgba(42,31,71,.92);color:#fff;padding:11px 18px;border-radius:14px;font-size:14px;transition:.3s;z-index:50;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.rv{opacity:0;transform:translateY(14px);transition:opacity .6s,transform .6s}.rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}.scene i{animation:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol><symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 6h8M18 6h2M4 12h2M12 12h8M4 18h9M19 18h1"/><circle cx="15" cy="6" r="2.2"/><circle cx="9" cy="12" r="2.2"/><circle cx="16" cy="18" r="2.2"/></symbol><symbol id="i-box" viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></symbol><symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></symbol><symbol id="i-flask" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6L4.5 19a2 2 0 0 0 1.8 3h11.4a2 2 0 0 0 1.8-3L14 9V3"/><path d="M7.5 15h9"/></symbol><symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 12.5l9 5 9-5M3 16.5l9 5 9-5"/></symbol><symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></symbol><symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/><circle cx="12" cy="16" r="1.2"/></symbol><symbol id="i-code" viewBox="0 0 24 24"><path d="M8 8l-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14"/></symbol><symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M14 9l2 2"/></symbol><symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3.2 3 3.2 15 0 18M12 3c-3.2 3-3.2 15 0 18"/></symbol><symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></symbol><symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></symbol><symbol id="i-badge" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="11" r="2.2"/><path d="M5.8 16c.6-1.6 1.8-2.4 3.2-2.4s2.6.8 3.2 2.4M15 10h3.5M15 13.5h3.5"/></symbol><symbol id="i-puzzle" viewBox="0 0 24 24"><path d="M10 4.5a2 2 0 1 1 4 0V6h3.5a1 1 0 0 1 1 1v3.5H20a2 2 0 1 1 0 4h-1.5V18a1 1 0 0 1-1 1H14v-1.5a2 2 0 1 0-4 0V19H6.5a1 1 0 0 1-1-1v-3.5H7a2 2 0 1 0 0-4H5.5V7a1 1 0 0 1 1-1H10z"/></symbol><symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></symbol><symbol id="i-books" viewBox="0 0 24 24"><rect x="3.5" y="4" width="4" height="16" rx="1"/><rect x="9.5" y="4" width="4" height="16" rx="1"/><path d="M16 5.5l3.6-1 3 15-3.6 1z"/></symbol><symbol id="i-tag" viewBox="0 0 24 24"><path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9z"/><circle cx="8" cy="8" r="1.4"/></symbol><symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/></symbol></svg>
+<div class="scene" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+
+
+<main id="top" class="wrap">
+
+  <div class="hero">
+    <div class="brandmark"><span class="logo">S</span><span class="bn">APK Builder</span></div>
+    <span class="pill"><i></i> Version 2.0 &nbsp;·&nbsp; Sketchware edition</span>
+    <h1>Turn any website into an <span>Android app</span></h1>
+    <p class="lead">Type a URL, pick an icon, get a signed APK, right on your phone. Smart back control, live preview, offline pages, and a Studio for activities and libraries.</p>
+    <div class="cta">
+      <a class="btn primary" href="https://github.com/SilencoreX/Apkbuilder-by-silencorex-/releases/download/V2/APK-Builder.apk" rel="noopener"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 20h16"/></svg> Download APK &nbsp;·&nbsp; 11.2 MB</a>
+    </div>
+    <div class="meta">
+      <span>Developer <b>Silencorex (Sufiyan)</b></span><span>Pure Java + resources</span><span>No Gradle, no libraries</span><span>Free</span>
+    </div>
+  </div>
+
+  <div class="stats rv">
+    <div class="stat"><b>46</b><span>Java files</span></div>
+    <div class="stat"><b>8,600+</b><span>Lines of code</span></div>
+    <div class="stat"><b>2</b><span>Activities per app (Splash + Web)</span></div>
+    <div class="stat"><b>v1+v2</b><span>On-device APK signing</span></div>
+  </div>
+
+  <section id="how">
+    <div class="eyebrow">How it works</div>
+    <h2>Your phone is the build server</h2>
+    <p class="sub">The maker app clones its own installed APK, writes a fresh binary manifest and a config file, swaps the icon, signs the result with a built-in pure-Java signer, then asks Android to verify it. No cloud, no PC.</p>
+    <div class="grid g3">
+      <div class="card rv"><div class="ico"><svg class="ic"><use href="#i-link"/></svg></div><h3>1 · Enter a URL</h3><p>Name, package, version, Min / Target SDK, icon shape and background are all editable.</p></div>
+      <div class="card rv"><div class="ico"><svg class="ic"><use href="#i-sliders"/></svg></div><h3>2 · Tune everything</h3><p>Back control, navigation, rules, ad block, headers, app lock, permissions, Studio.</p></div>
+      <div class="card rv"><div class="ico"><svg class="ic"><use href="#i-box"/></svg></div><h3>3 · Build &amp; share</h3><p>Signed APK in seconds. Save, share or install. Projects stay editable, with backups.</p></div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="eyebrow">Features</div>
+    <h2>Everything in one clean maker</h2>
+    <p class="sub">Each generated app has a Splash screen (your icon and “Made by silencorex”) and a very advanced WebView screen.</p>
+    <div class="grid g3">
+      <div class="card rv"><div class="ico"><svg class="ic"><use href="#i-undo"/></svg></div><h3>Smart back control</h3><p>YouTube back never walks to Google, and one back never kills the app. Modes: Smart, Home, Exit, System. Skip-hosts, double-back or confirm dialog.</p></div>
+      <div class="card rv"><div class="ico"><svg class="ic"><use href="#i-flask"/></svg></div><h3>Live preview + back tester<span class="tag">New</span></h3><p>Run the real app engine inside the maker. Press Back and see every decision in a log: mode, rule, skipped hop, tab switch, exit.</p></div>
+      <div class="card rv"><div class="ico"><svg class="ic"><use href="#i-layers"/></svg></div><h3>Tabs &amp; drawer<span class="tag">New</span></h3><p>Bottom tabs (2–5) or a side drawer (2–12) with multiple URLs. Each tab keeps its own page and history.</p></div>
+      <div class="card rv"><div class="ico"><svg class="ic"><use href="#i-target"/></svg></div><h3>Per-site rules<span class="tag">New</span></h3><p>One line per site, for example <code>youtube.com | back=skip, ua=desktop</code>. Control back, external links, user agent, JS, zoom, dark mode, cache and blocking.</p></div>
+      <div class="card rv"><div class="ico"><svg class="ic"><use href="#i-shield"/></svg></div><h3>Ad &amp; tracker block<span class="tag">New</span></h3><p>Built-in host list, your own extra hosts, and cosmetic CSS that hides ad boxes.</p></div>
+      <div class="card rv"><div class="ico"><svg class="ic"><use href="#i-lock"/></svg></div><h3>App lock<span class="tag">New</span></h3><p>Phone screen-lock / fingerprint, or your own PIN. The APK keeps only a salted SHA-256 hash. Lock again after N seconds.</p></div>
+      <div class="card rv"><div class="ico"><svg class="ic"><use href="#i-code"/></svg></div><h3>JavaScript bridge<span class="tag">New</span></h3><p><code>window.SilencorexApp</code>: toast, share, copy, vibrate, openExternal, openTab, reload, exit, appInfo. Trusted pages only.</p></div>
+      <div class="card rv"><div class="ico"><svg class="ic"><use href="#i-key"/></svg></div><h3>Headers &amp; login<span class="tag">New</span></h3><p>Custom request headers and HTTP basic auth, sent only to your own site.</p></div>
+      <div class="card rv"><div class="ico"><svg class="ic"><use href="#i-globe"/></svg></div><h3>WebView controls</h3><p>JS, cookies, zoom, user agent, cache, popups, file upload, downloads, force dark, offline error page, custom CSS and JS.</p></div>
+      <div class="card rv"><div class="ico"><svg class="ic"><use href="#i-phone"/></svg></div><h3>Display &amp; permissions</h3><p>Fullscreen, status / nav bar colors, orientation, pull-to-refresh, secure screen, keep awake, location, camera, mic and extra permissions.</p></div>
+      <div class="card rv"><div class="ico"><svg class="ic"><use href="#i-db"/></svg></div><h3>Projects &amp; backups</h3><p>Every app is a saved project. Export a backup zip, send it to anyone, import it on another phone.</p></div>
+      <div class="card rv"><div class="ico"><svg class="ic"><use href="#i-badge"/></svg></div><h3>Signing keys</h3><p>Built-in key, create your own (RSA 2048, PKCS12), or import / export a keystore.</p></div>
+    </div>
+  </section>
+
+  <section id="studio">
+    <div class="panel rv">
+      <div class="eyebrow">Studio <span class="tag">New in 2.0</span></div>
+      <h2>An advanced system for your own code</h2>
+      <p class="sub" style="margin-bottom:0">A phone cannot compile Java or XML, so Studio wires things up instead. Write your Activity and layout in Sketchware inside the maker, and every generated app already carries it. Then declare, ship and launch it from Studio.</p>
+      <div class="grid g2">
+        <div class="card"><div class="ico"><svg class="ic"><use href="#i-puzzle"/></svg></div><h3>Activities &amp; components</h3><p>Declare Activity, Service, Receiver and Provider in the manifest.</p><ul><li>Exported, label, orientation, launch mode, theme</li><li>Intent filters: deep links, share targets</li><li>“Start after splash” launcher override</li><li>Shows if the class is in the maker, in a .dex, or missing</li></ul></div>
+        <div class="card"><div class="ico"><svg class="ic"><use href="#i-file"/></svg></div><h3>Files &amp; web pages</h3><p>Pack assets and build fully offline apps.</p><ul><li>Create HTML / CSS / JS with a built-in editor</li><li>“Use as start page” runs <code>file:///android_asset/…</code></li><li>Add images, fonts, JSON, anything</li><li>Native <code>.so</code> libraries per CPU type</li></ul></div>
+        <div class="card"><div class="ico"><svg class="ic"><use href="#i-books"/></svg></div><h3>Libraries</h3><p>Two routes for third-party code.</p><ul><li>Import a ready <code>.dex</code> or an APK with <code>classes.dex</code></li><li><code>.jar</code> / <code>.aar</code>: add them in Sketchware’s library manager, they compile into the maker</li><li>Dex version is checked against Min SDK</li></ul></div>
+        <div class="card"><div class="ico"><svg class="ic"><use href="#i-tag"/></svg></div><h3>Meta-data &amp; checks</h3><p>API keys and safe builds.</p><ul><li>Application-level meta-data lines</li><li>Warning if a declared class is in no dex</li><li>Files travel inside project backups</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="install">
+    <div class="eyebrow">Install</div>
+    <h2>Up and running in Sketchware</h2>
+    <div class="card rv" style="margin-bottom:18px"><h3>Just want the app?</h3><p>Download the APK, open it, and allow “Install unknown apps” for your browser or file manager when Android asks. Then open APK Builder, tap New app, enter a URL and build.</p></div>
+  </section>
+
+  <section id="specs">
+    <div class="eyebrow">Details</div>
+    <h2>Requirements &amp; limits</h2>
+    <p class="sub"></p>
+    <div class="scroll"><table class="tbl">
+      <tr><th>Item</th><th>Detail</th></tr>
+      <tr><td><b>Tool</b></td><td>Sketchware (Pro recommended). Code is written in Java 7 style, no lambdas.</td></tr>
+      <tr><td><b>Android</b></td><td>Maker Min SDK 21+. Direct share / install through Downloads needs Android 10+; older versions use “Save to…”.</td></tr>
+      <tr><td><b>Signing</b></td><td>v1 (jar) for Min SDK below 24, plus v2. The built-in key is the same in all copies. Create your own key for updates or the Play Store.</td></tr>
+      <tr><td><b>APK size</b></td><td>About the same as the maker itself, because its dex is cloned.</td></tr>
+      <tr><td><b>Studio files</b></td><td>60 MB per project in total, 30 MB per file.</td></tr>
+      <tr><td><b>Libraries</b></td><td><code>.dex</code> or APK with dex here. <code>.jar</code> / <code>.aar</code> through Sketchware’s library manager.</td></tr>
+      <tr><td><b>Keys</b></td><td>An APK signed with a different key cannot update an installed app. Uninstall the old one first.</td></tr>
+    </table></div>
+  </section>
+
+  <section>
+    <div class="note rv"><div class="i"><svg class="ic"><use href="#i-warn"/></svg></div><div><b>Early release.</b> The signing, manifest writer, rules, ad-block, PIN and file helpers were tested on a PC, and every build on your phone is checked by Android itself. Some features have had little real-device testing yet. If something breaks, tell the developer (Silencorex) what happened and it gets fixed fast.</div></div>
+  </section>
+
+  <section id="faq">
+    <div class="eyebrow">FAQ</div>
+    <h2>Questions</h2>
+    <p class="sub"></p>
+    <details><summary>Can I write Java and XML inside the maker?</summary><p>Not compile them, because Android phones have no Java compiler. Write the Activity and layout in Sketchware inside the maker app; generated apps are clones, so they include your code. Studio then declares and launches it.</p></details>
+    <details><summary>Why does the build say a class is not in any dex?</summary><p>You declared an Activity, Service or start class that is not in the maker or in an imported .dex. The app would crash when starting it. Add the class in Sketchware, or import its .dex in Libraries.</p></details>
+    <details><summary>The icon did not change.</summary><p>The maker’s own icon must be a plain PNG, not an adaptive XML icon.</p></details>
+    <details><summary>Install is blocked.</summary><p>Allow “Install unknown apps” for the maker and add the REQUEST_INSTALL_PACKAGES permission, or install the saved file from Downloads/Silencorex.</p></details>
+    <details><summary>Does it work with ProGuard on?</summary><p>No. R8 would remove the shell classes. Keep it off.</p></details>
+    <details><summary>Is the app lock PIN safe?</summary><p>The built app stores a salted SHA-256 hash, not the PIN. Like any client-side lock, it stops casual access, not someone who unpacks the APK.</p></details>
+  </section>
+
+  <section id="changelog">
+    <div class="eyebrow">Changelog</div>
+    <h2>Version history</h2>
+    <p class="sub"></p>
+    <div class="log">
+      <div><h3>2.0 — Sketchware edition, current</h3><ul>
+        <li>Studio: components, files and pages editor, libraries, meta-data</li>
+        <li>Live preview with back tester</li>
+        <li>Tabs, drawer, per-site rules, ad block, headers, JS bridge, app lock</li>
+        <li>New premium off-white and velvet-purple interface</li>
+        <li>Backups now include Studio files</li></ul></div>
+      <div><h3>1.0 — Foundation</h3><ul>
+        <li>APK Builder with Splash and WebView, smart back control</li>
+        <li>On-device manifest writer and v1 + v2 signer</li>
+        <li>Projects, backups, signing keys</li></ul></div>
+    </div>
+  </section>
+
+  <div class="dl rv" id="download"><div class="dlglass">
+    <h2>Get APK Builder 2.0</h2>
+    <p>Install APK Builder 2.0 on your phone. Free, from Silencorex.</p>
+    <div class="cta">
+      <a class="btn primary" href="https://github.com/SilencoreX/Apkbuilder-by-silencorex-/releases/download/V2/APK-Builder.apk" rel="noopener"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 20h16"/></svg> Download APK &nbsp;·&nbsp; 11.2 MB</a>
+    </div>
+  </div></div>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b>APK Builder 2.0</b> · Made by <b>Silencorex</b> (Sufiyan)</p>
+    <p style="margin-top:6px;font-size:13px">Android is a trademark of Google LLC. Sketchware is a separate project. This page and tool are independent.</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  function toast(t){
+    var e=document.getElementById("toast"); e.textContent=t; e.classList.add("on");
+    clearTimeout(toast.h); toast.h=setTimeout(function(){e.classList.remove("on")},2200);
+  }
+[].forEach.call(document.querySelectorAll("[data-copy]"),function(b){
+    b.addEventListener("click",function(){
+      var t=document.getElementById(b.getAttribute("data-copy")).textContent.trim();
+      function ok(){toast("Copied")}
+      if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,function(){fb(t);ok()})}
+      else{fb(t);ok()}
+    });
+  });
+  function fb(t){var x=document.createElement("textarea");x.value=t;x.style.position="fixed";x.style.opacity="0";document.body.appendChild(x);x.select();try{document.execCommand("copy")}catch(e){}document.body.removeChild(x)}
+  var G=".stat,.card,.step,.panel,.scroll,details,.dlglass,.note,.tree";
+  document.addEventListener("pointermove",function(e){
+    var g=e.target.closest&&e.target.closest(G);
+    if(!g) return;
+    var r=g.getBoundingClientRect();
+    g.style.setProperty("--mx",(e.clientX-r.left)+"px");
+    g.style.setProperty("--my",(e.clientY-r.top)+"px");
+  },{passive:true});
+  var els=document.querySelectorAll(".rv");
+  if("IntersectionObserver" in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}})},{threshold:.08});
+    [].forEach.call(els,function(e){io.observe(e)});
+  }else{[].forEach.call(els,function(e){e.classList.add("in")})}
+})();
+</script>
+</body>
+</html>
